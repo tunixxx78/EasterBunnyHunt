@@ -8,7 +8,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/MainMenu.unity
     guid: a8862b3163e2a49fab72a2f901fb80dc
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/WaitingRoom.unity
     guid: 5ba6172c6e2df4aebbadb4013c1ab0c1
   - enabled: 1
