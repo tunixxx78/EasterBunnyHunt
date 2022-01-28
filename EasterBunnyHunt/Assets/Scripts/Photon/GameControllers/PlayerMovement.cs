@@ -6,10 +6,17 @@ using Photon.Pun;
 public class PlayerMovement : MonoBehaviour
 {
     private PhotonView pV;
+    //Rigidbody myCC;
     private CharacterController myCC;
-    public float movementSpeed, jumpForce;
+    public float movementSpeed, jumpForce, groundDistance;
     public float rotationSpeed;
     [SerializeField] Camera myCamera;
+
+    public LayerMask groundMask;
+    public Transform groundCheck;
+    [SerializeField] bool isGrounded;
+    Vector3 movement, velocity;
+    float gravityValue = -9.81f;
 
     private void Start()
     {
@@ -20,11 +27,16 @@ public class PlayerMovement : MonoBehaviour
 
     private void Update()
     {
-        if (pV.IsMine)
+        isGrounded = myCC.isGrounded;
+        if(isGrounded && velocity.y < 0)
         {
-            BasicMovement();
-            BasicRotation();
+            velocity.y = 0;
         }
+
+        movement = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
+
+        
+        
 
         if (Input.GetKeyDown(KeyCode.Escape))
         {
@@ -34,10 +46,32 @@ public class PlayerMovement : MonoBehaviour
         {
             myCamera.enabled = false;
         }
+
+        
+
+        velocity.y += gravityValue * Time.deltaTime;
+        myCC.Move(velocity * Time.deltaTime);
     }
 
-    void BasicMovement()
+    private void FixedUpdate()
     {
+        if (pV.IsMine)
+        {
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                BasicJumping();
+            }
+        BasicMovement(movement);
+            
+            
+        BasicRotation();
+        }
+    }
+
+    void BasicMovement(Vector3 direction)
+    {
+        
+        
         if(Input.GetKey(KeyCode.W))
         {
             myCC.Move(transform.forward * Time.deltaTime * movementSpeed);
@@ -54,14 +88,16 @@ public class PlayerMovement : MonoBehaviour
         {
             myCC.Move(transform.right * Time.deltaTime * movementSpeed);
         }
-        if (Input.GetKey(KeyCode.Space))
-        {
-            myCC.Move(transform.up * Time.deltaTime * jumpForce);
-        }
-        if (Input.GetKey(KeyCode.Return))
-        {
-            myCC.Move(-transform.up * Time.deltaTime * jumpForce);
-        }
+       
+        
+
+    }
+
+    void BasicJumping()
+    {
+        myCC.Move(transform.up * Time.deltaTime * jumpForce * -gravityValue);
+
+        Debug.Log("NYT HYPITÄÄN!");
     }
 
     void BasicRotation()
