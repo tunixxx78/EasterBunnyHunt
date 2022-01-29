@@ -16,6 +16,7 @@ public class PhotonPlayer : MonoBehaviour
         int spawnPicker = Random.Range(0, GameSetup.gS.spawnPoints.Length);
         if(pV.IsMine)
         {
+           
            myAvatar = PhotonNetwork.Instantiate(Path.Combine("photonPrefabs", "playerAvatar"), GameSetup.gS.spawnPoints[spawnPicker].position, GameSetup.gS.spawnPoints[spawnPicker].rotation, 0);
         }
     }
