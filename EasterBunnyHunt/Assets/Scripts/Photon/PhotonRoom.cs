@@ -109,9 +109,15 @@ public class PhotonRoom : MonoBehaviourPunCallbacks, IInRoomCallbacks
         if (MultiplayerSetting.multiplayerSetting.delayStart)
         {
             Debug.Log("Displayer players in room out of max players possible (" + playersInRoom + ":" + MultiplayerSetting.multiplayerSetting.maxPlayers + ")");
+
+            PhotonLobby.lobby.playerAmountText.text = playersInRoom + " : " + MultiplayerSetting.multiplayerSetting.maxPlayers;
+
             if(playersInRoom > 1)
             {
                 readyToCount = true;
+                PhotonLobby.lobby.enteringGameText.text = "Get ready to start in ... ";
+                PhotonLobby.lobby.timerText.SetActive(true);
+                PhotonLobby.lobby.canStartTimer = true;
 
             }
             if (playersInRoom == MultiplayerSetting.multiplayerSetting.maxPlayers)
@@ -140,9 +146,16 @@ public class PhotonRoom : MonoBehaviourPunCallbacks, IInRoomCallbacks
         if (MultiplayerSetting.multiplayerSetting.delayStart)
         {
             Debug.Log("Displayer players in room out of max players possible (" + playersInRoom + ":" + MultiplayerSetting.multiplayerSetting.maxPlayers + ")");
-            if(playersInRoom > 1)
+
+            PhotonLobby.lobby.playerAmountText.text = playersInRoom + " : " + MultiplayerSetting.multiplayerSetting.maxPlayers;
+
+            if (playersInRoom > 1)
             {
                 readyToCount = true;
+                PhotonLobby.lobby.enteringGameText.text = "Get ready to start in ... ";
+                PhotonLobby.lobby.timerText.SetActive(true);
+                PhotonLobby.lobby.canStartTimer = true;
+
             }
             if(playersInRoom == MultiplayerSetting.multiplayerSetting.maxPlayers)
             {

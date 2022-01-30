@@ -27,13 +27,30 @@ public class PlayerMovement : MonoBehaviour
 
     private void Update()
     {
-        isGrounded = myCC.isGrounded;
-        if(isGrounded && velocity.y < 0)
+        if (pV.IsMine)
         {
-            velocity.y = 0;
+            if (Input.GetButtonDown("Jump") && isGrounded)
+            {
+                BasicJumping();
+            }
+            BasicMovement();
+
+
+            BasicRotation();
         }
 
-        movement = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
+        isGrounded = Physics.CheckSphere(groundCheck.position, groundDistance, groundMask);
+
+
+        if(isGrounded && velocity.y < 0)
+        {
+            velocity.y = -2f;
+        }
+
+        float x = Input.GetAxis("Horizontal");
+        float z = Input.GetAxis("Vertical");
+
+        movement = transform.right * x + transform.forward * z;
 
         
         
@@ -49,10 +66,10 @@ public class PlayerMovement : MonoBehaviour
 
         
 
-        velocity.y += gravityValue * Time.deltaTime;
+        velocity.y += gravityValue * 2 * Time.deltaTime;
         myCC.Move(velocity * Time.deltaTime);
     }
-
+    /*
     private void FixedUpdate()
     {
         if (pV.IsMine)
@@ -67,11 +84,12 @@ public class PlayerMovement : MonoBehaviour
         BasicRotation();
         }
     }
-
-    void BasicMovement(Vector3 direction)
+    */
+    void BasicMovement()
     {
-        
-        
+
+        myCC.Move(movement * movementSpeed * Time.deltaTime);
+        /*
         if(Input.GetKey(KeyCode.W))
         {
             myCC.Move(transform.forward * Time.deltaTime * movementSpeed);
@@ -89,13 +107,13 @@ public class PlayerMovement : MonoBehaviour
             myCC.Move(transform.right * Time.deltaTime * movementSpeed);
         }
        
-        
+        */
 
     }
 
     void BasicJumping()
     {
-        myCC.Move(transform.up * Time.deltaTime * jumpForce * -gravityValue);
+        velocity.y = Mathf.Sqrt(jumpForce * -2f * gravityValue);
 
         Debug.Log("NYT HYPITÄÄN!");
     }
