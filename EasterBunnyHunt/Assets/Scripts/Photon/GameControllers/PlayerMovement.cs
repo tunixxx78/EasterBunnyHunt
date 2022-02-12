@@ -18,22 +18,79 @@ public class PlayerMovement : MonoBehaviour
     Vector3 movement, velocity;
     float gravityValue = -9.81f;
 
+    public bool isCarryingEgg = false;
+
+    [SerializeField] GameObject playerAvatar, secondCamera;
+
+    public GameObject eggOnGo;
+
     private void Start()
     {
         pV = GetComponent<PhotonView>();
         myCC = GetComponent<CharacterController>();
-
+        myCamera = GetComponentInChildren<Camera>();
+        /*
+        if (!pV.IsMine)
+        {
+            myCamera.enabled = false;
+            secondCamera.SetActive(false);
+        }
+        */
     }
 
     private void Update()
     {
+        
+        if (!pV.IsMine)
+        {
+            
+            secondCamera.SetActive(false);
+            myCamera.enabled = false;
+        }
+        
         if (pV.IsMine)
         {
+            
+            //secondCamera.SetActive(true);
+
             if (Input.GetButtonDown("Jump") && isGrounded)
             {
                 BasicJumping();
             }
-            BasicMovement();
+            if (Input.GetKey(KeyCode.W))
+            {
+                //transform.rotation = Quaternion.LookRotation(myCamera.transform.forward, myCamera.transform.up * Time.deltaTime);
+                BasicMovement();
+
+            }
+            if (Input.GetKey(KeyCode.A))
+            {
+                playerAvatar.transform.localRotation = Quaternion.Euler(0, -90, 0);
+                BasicMovement();
+            }
+            if (Input.GetKeyUp(KeyCode.A))
+            {
+                playerAvatar.transform.localRotation = Quaternion.Euler(0, 0, 0);
+            }
+            if (Input.GetKey(KeyCode.D))
+            {
+                playerAvatar.transform.localRotation = Quaternion.Euler(0, 90, 0);
+                BasicMovement();
+            }
+            if (Input.GetKeyUp(KeyCode.D))
+            {
+                playerAvatar.transform.localRotation = Quaternion.Euler(0, 0, 0);
+            }
+            if (Input.GetKey(KeyCode.S))
+            {
+                playerAvatar.transform.localRotation = Quaternion.Euler(0, 180, 0);
+                BasicMovement();
+            }
+            if (Input.GetKeyUp(KeyCode.S))
+            {
+                playerAvatar.transform.localRotation = Quaternion.Euler(0, 0, 0);
+            }
+            
 
 
             BasicRotation();
@@ -58,13 +115,7 @@ public class PlayerMovement : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             Application.Quit();
-        }
-        if (!pV.IsMine)
-        {
-            myCamera.enabled = false;
-        }
-
-        
+        }        
 
         velocity.y += gravityValue * 2 * Time.deltaTime;
         myCC.Move(velocity * Time.deltaTime);
@@ -89,25 +140,7 @@ public class PlayerMovement : MonoBehaviour
     {
 
         myCC.Move(movement * movementSpeed * Time.deltaTime);
-        /*
-        if(Input.GetKey(KeyCode.W))
-        {
-            myCC.Move(transform.forward * Time.deltaTime * movementSpeed);
-        }
-        if (Input.GetKey(KeyCode.A))
-        {
-            myCC.Move(-transform.right * Time.deltaTime * movementSpeed);
-        }
-        if (Input.GetKey(KeyCode.S))
-        {
-            myCC.Move(-transform.forward * Time.deltaTime * movementSpeed);
-        }
-        if (Input.GetKey(KeyCode.D))
-        {
-            myCC.Move(transform.right * Time.deltaTime * movementSpeed);
-        }
-       
-        */
+        
 
     }
 
@@ -122,5 +155,17 @@ public class PlayerMovement : MonoBehaviour
     {
         float mouseX = Input.GetAxis("Mouse X") * Time.deltaTime * rotationSpeed;
         transform.Rotate(new Vector3(0, mouseX, 0));
+    }
+
+    private void OnTriggerEnter(Collider collider)
+    {
+ 
+        if(collider.gameObject.tag == "Egg")
+            {
+            eggOnGo.SetActive(true);
+            isCarryingEgg = true;
+            Debug.Log("Muna Löydetty ja kerätty");
+            }
+
     }
 }

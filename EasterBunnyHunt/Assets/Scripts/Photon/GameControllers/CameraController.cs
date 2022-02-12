@@ -10,11 +10,14 @@ public class CameraController : MonoBehaviour
     public Transform cameraTarget;
     [SerializeField] float smoothSpeed = .125f;
     [SerializeField] Vector3 offset;
+    
 
     private void Start()
     {
         pV = GetComponent<PhotonView>();
         myCamera = GetComponent<Camera>();
+        
+
     }
 
     private void Update()
@@ -23,6 +26,7 @@ public class CameraController : MonoBehaviour
         {
             myCamera.enabled = false;
         }
+       
     }
 
     private void LateUpdate()
