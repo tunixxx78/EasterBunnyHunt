@@ -12,6 +12,9 @@ public class NestsController : MonoBehaviour
     [SerializeField] float currentTime, startTime;
     public bool isHatching = false;
     public GameObject hatchingTimer, nestEgg;
+    [SerializeField] int playerPhotonViewIdNro;
+    [SerializeField] int currentPlayer;
+    
 
     //public List<GameObject> eggsInNest;
     //public List<Transform> NestSpawnPoints;
@@ -24,7 +27,65 @@ public class NestsController : MonoBehaviour
 
     private void Update()
     {
-        if(hatchingTimer.activeSelf == true)
+        //if (pV.IsMine)
+        {
+            if (hatchingTimer.activeSelf == true)
+            {
+                currentTime -= 1 * Time.deltaTime;
+                string tempTimer = string.Format("{0:00}", currentTime);
+                hatchingTime.text = tempTimer;
+
+                Debug.Log(currentTime);
+            }
+
+
+            if (currentTime <= 0.2)
+            {
+                
+
+                if (eggOne.activeSelf == true)
+                {
+                    eggOne.GetComponent<MeshRenderer>().enabled = false;
+                    chickOne.SetActive(true);
+                    hatchingTimer.SetActive(false);
+                    currentTime = startTime;
+                }
+                if (eggOne.activeSelf == true && eggTwo.activeSelf == true)
+                {
+                    eggTwo.GetComponent<MeshRenderer>().enabled = false;
+                    chickTwo.SetActive(true);
+                    hatchingTimer.SetActive(false);
+                    currentTime = startTime;
+                }
+                if (eggOne.activeSelf == true && eggTwo.activeSelf == true && eggThree.activeSelf == true)
+                {
+                    eggThree.GetComponent<MeshRenderer>().enabled = false;
+                    chickThree.SetActive(true);
+                    hatchingTimer.SetActive(false);
+                    currentTime = startTime;
+                }
+                if (eggOne.activeSelf == true && eggTwo.activeSelf == true && eggThree.activeSelf == true && eggFour.activeSelf == true)
+                {
+                    eggFour.GetComponent<MeshRenderer>().enabled = false;
+                    chickFour.SetActive(true);
+                    hatchingTimer.SetActive(false);
+                    currentTime = startTime;
+                }
+                if (eggOne.activeSelf == true && eggTwo.activeSelf == true && eggThree.activeSelf == true && eggFour.activeSelf == true && eggFive.activeSelf == true)
+                {
+                    eggFive.GetComponent<MeshRenderer>().enabled = false;
+                    chickFive.SetActive(true);
+                    hatchingTimer.SetActive(false);
+                    currentTime = startTime;
+                }
+            }
+
+            if (Input.GetKey(KeyCode.P))
+            {
+                hatchingTimer.SetActive(true);
+            }
+        }
+        /*if(hatchingTimer.activeSelf == true)
         {
             currentTime -= 1 * Time.deltaTime;
             string tempTimer = string.Format("{0:00}", currentTime);
@@ -36,6 +97,8 @@ public class NestsController : MonoBehaviour
 
         if(currentTime <= 0.2)
         {
+            FindObjectOfType<PlayerMovement>().MyHatchedEggs();
+
             if(eggOne.activeSelf == true)
             {
                 eggOne.GetComponent<MeshRenderer>().enabled = false;
@@ -58,31 +121,61 @@ public class NestsController : MonoBehaviour
         {
             hatchingTimer.SetActive(true);
         }
+        */
     }
 
     private void OnTriggerEnter(Collider collider)
     {
-        if(collider.gameObject.tag == "Player" && collider.GetComponent<PlayerMovement>().isCarryingEgg == true)
+        if(collider.GetComponent<PhotonView>().ViewID == playerPhotonViewIdNro)
         {
+            //currentPlayer = collider.GetComponent<PhotonView>().ViewID;
 
-            if(eggOne.activeSelf == false)
+            if (collider.gameObject.tag == "Player" && collider.GetComponent<PlayerMovement>().isCarryingEgg == true)
             {
-                eggOne.SetActive(true);
-                hatchingTimer.SetActive(true);
-                Debug.Log(collider.gameObject + "Osuma");
-                collider.GetComponent<PlayerMovement>().eggOnGo.SetActive(false);
-                collider.GetComponent<PlayerMovement>().isCarryingEgg = false;
+
+                if (eggOne.activeSelf == false)
+                {
+                    eggOne.SetActive(true);
+                    hatchingTimer.SetActive(true);
+                    Debug.Log(collider.gameObject + "Osuma");
+                    collider.GetComponent<PlayerMovement>().eggOnGo.SetActive(false);
+                    collider.GetComponent<PlayerMovement>().isCarryingEgg = false;
+                }
+                else if (eggOne.activeSelf == true && eggTwo.activeSelf == false)
+                {
+                    eggTwo.SetActive(true);
+                    hatchingTimer.SetActive(true);
+                    Debug.Log(collider.gameObject + "Osuma");
+                    collider.GetComponent<PlayerMovement>().eggOnGo.SetActive(false);
+                    collider.GetComponent<PlayerMovement>().isCarryingEgg = false;
+                }
+                else if (eggOne.activeSelf == true && eggTwo.activeSelf == true && eggThree.activeSelf == false)
+                {
+                    eggThree.SetActive(true);
+                    hatchingTimer.SetActive(true);
+                    collider.GetComponent<PlayerMovement>().eggOnGo.SetActive(false);
+                    collider.GetComponent<PlayerMovement>().isCarryingEgg = false;
+                }
+                else if (eggOne.activeSelf == true && eggTwo.activeSelf == true && eggThree.activeSelf == true && eggFour.activeSelf == false)
+                {
+                    eggFour.SetActive(true);
+                    hatchingTimer.SetActive(true);
+                    collider.GetComponent<PlayerMovement>().eggOnGo.SetActive(false);
+                    collider.GetComponent<PlayerMovement>().isCarryingEgg = false;
+                }
+                else if (eggOne.activeSelf == true && eggTwo.activeSelf == true && eggThree.activeSelf == true && eggFour.activeSelf == true && eggFive.activeSelf == false)
+                {
+                    eggFive.SetActive(true);
+                    hatchingTimer.SetActive(true);
+                    collider.GetComponent<PlayerMovement>().eggOnGo.SetActive(false);
+                    collider.GetComponent<PlayerMovement>().isCarryingEgg = false;
+                }
+
+
             }
-            else if (eggOne.activeSelf == true && eggTwo.activeSelf == false)
-            {
-                eggTwo.SetActive(true);
-                hatchingTimer.SetActive(true);
-                Debug.Log(collider.gameObject + "Osuma");
-                collider.GetComponent<PlayerMovement>().eggOnGo.SetActive(false);
-                collider.GetComponent<PlayerMovement>().isCarryingEgg = false;
-            }
-            
-            
         }
+        
     }
+
+
 }

@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
+using TMPro;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -20,22 +21,26 @@ public class PlayerMovement : MonoBehaviour
 
     public bool isCarryingEgg = false;
 
-    [SerializeField] GameObject playerAvatar, secondCamera;
+    [SerializeField] GameObject playerAvatar, secondCamera, finalResultText;
 
     public GameObject eggOnGo;
+
+    [SerializeField] TMP_Text resultText;
+
+    [SerializeField] int eggsHatched = 0;
 
     private void Start()
     {
         pV = GetComponent<PhotonView>();
         myCC = GetComponent<CharacterController>();
         myCamera = GetComponentInChildren<Camera>();
-        /*
+        
         if (!pV.IsMine)
         {
             myCamera.enabled = false;
             secondCamera.SetActive(false);
         }
-        */
+        
     }
 
     private void Update()
@@ -51,7 +56,7 @@ public class PlayerMovement : MonoBehaviour
         if (pV.IsMine)
         {
             
-            //secondCamera.SetActive(true);
+            secondCamera.SetActive(true);
 
             if (Input.GetButtonDown("Jump") && isGrounded)
             {
@@ -59,7 +64,7 @@ public class PlayerMovement : MonoBehaviour
             }
             if (Input.GetKey(KeyCode.W))
             {
-                //transform.rotation = Quaternion.LookRotation(myCamera.transform.forward, myCamera.transform.up * Time.deltaTime);
+                transform.rotation = Quaternion.LookRotation(myCamera.transform.forward, myCamera.transform.up * Time.deltaTime);
                 BasicMovement();
 
             }
@@ -91,7 +96,11 @@ public class PlayerMovement : MonoBehaviour
                 playerAvatar.transform.localRotation = Quaternion.Euler(0, 0, 0);
             }
             
-
+            if(eggsHatched == 5)
+            {
+                resultText.text = "YOU WIN THIS ROUND!";
+                finalResultText.SetActive(true);
+            }
 
             BasicRotation();
         }
@@ -165,7 +174,12 @@ public class PlayerMovement : MonoBehaviour
             eggOnGo.SetActive(true);
             isCarryingEgg = true;
             Debug.Log("Muna Löydetty ja kerätty");
+            FindObjectOfType<EggsSpawner>().SpawnEggs();
+            Destroy(collider.gameObject);
+
             }
 
     }
+
+   
 }

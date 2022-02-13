@@ -7,10 +7,12 @@ using Photon.Realtime;
 public class CollectibleEgg : MonoBehaviour
 {
     [SerializeField] PhotonView pV;
+    
 
     private void Start()
     {
         pV = GetComponent<PhotonView>();
+
     }
 
     private void OnTriggerEnter(Collider collider)
