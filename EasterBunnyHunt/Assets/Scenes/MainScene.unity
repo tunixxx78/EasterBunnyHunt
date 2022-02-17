@@ -831,6 +831,7 @@ MonoBehaviour:
   currentTime: 0
   startTime: 5
   isHatching: 0
+  gameIsOver: 0
   hatchingTimer: {fileID: 1280008888}
   nestEgg: {fileID: 8792101473639190327, guid: cd58df9e0005f401d9870b91aa1fe518, type: 3}
   playerPhotonViewIdNro: 2002
@@ -1946,6 +1947,7 @@ MonoBehaviour:
   currentTime: 0
   startTime: 5
   isHatching: 0
+  gameIsOver: 0
   hatchingTimer: {fileID: 1812191432}
   nestEgg: {fileID: 8792101473639190327, guid: cd58df9e0005f401d9870b91aa1fe518, type: 3}
   playerPhotonViewIdNro: 1002

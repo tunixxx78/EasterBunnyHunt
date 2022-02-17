@@ -717,6 +717,7 @@ MonoBehaviour:
   eggOnGo: {fileID: 5763499794970211560}
   resultText: {fileID: 113692813706778318}
   eggsHatched: 0
+  nests: []
 --- !u!114 &5726757463340335129
 MonoBehaviour:
   m_ObjectHideFlags: 0

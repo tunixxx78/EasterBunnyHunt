@@ -10,10 +10,11 @@ public class NestsController : MonoBehaviour
     [SerializeField] GameObject eggOne, eggTwo, eggThree, eggFour, eggFive, chickOne, chickTwo, chickThree, chickFour, chickFive;
     [SerializeField] TMP_Text hatchingTime;
     [SerializeField] float currentTime, startTime;
-    public bool isHatching = false;
+    public bool isHatching = false, gameIsOver = false;
     public GameObject hatchingTimer, nestEgg;
     [SerializeField] int playerPhotonViewIdNro;
     [SerializeField] int currentPlayer;
+    Collider thisplayer;
     
 
     //public List<GameObject> eggsInNest;
@@ -49,6 +50,11 @@ public class NestsController : MonoBehaviour
                     chickOne.SetActive(true);
                     hatchingTimer.SetActive(false);
                     currentTime = startTime;
+                    if (thisplayer.GetComponent<PlayerMovement>().eggsHatched == 0)
+                    {
+                        thisplayer.GetComponent<PlayerMovement>().eggsHatched += 1;
+                    }
+                    
                 }
                 if (eggOne.activeSelf == true && eggTwo.activeSelf == true)
                 {
@@ -56,6 +62,10 @@ public class NestsController : MonoBehaviour
                     chickTwo.SetActive(true);
                     hatchingTimer.SetActive(false);
                     currentTime = startTime;
+                    if (thisplayer.GetComponent<PlayerMovement>().eggsHatched == 1)
+                    {
+                        thisplayer.GetComponent<PlayerMovement>().eggsHatched += 1;
+                    }
                 }
                 if (eggOne.activeSelf == true && eggTwo.activeSelf == true && eggThree.activeSelf == true)
                 {
@@ -63,6 +73,10 @@ public class NestsController : MonoBehaviour
                     chickThree.SetActive(true);
                     hatchingTimer.SetActive(false);
                     currentTime = startTime;
+                    if (thisplayer.GetComponent<PlayerMovement>().eggsHatched == 2)
+                    {
+                        thisplayer.GetComponent<PlayerMovement>().eggsHatched += 1;
+                    }
                 }
                 if (eggOne.activeSelf == true && eggTwo.activeSelf == true && eggThree.activeSelf == true && eggFour.activeSelf == true)
                 {
@@ -70,6 +84,10 @@ public class NestsController : MonoBehaviour
                     chickFour.SetActive(true);
                     hatchingTimer.SetActive(false);
                     currentTime = startTime;
+                    if (thisplayer.GetComponent<PlayerMovement>().eggsHatched == 3)
+                    {
+                        thisplayer.GetComponent<PlayerMovement>().eggsHatched += 1;
+                    }
                 }
                 if (eggOne.activeSelf == true && eggTwo.activeSelf == true && eggThree.activeSelf == true && eggFour.activeSelf == true && eggFive.activeSelf == true)
                 {
@@ -77,6 +95,10 @@ public class NestsController : MonoBehaviour
                     chickFive.SetActive(true);
                     hatchingTimer.SetActive(false);
                     currentTime = startTime;
+                    if (thisplayer.GetComponent<PlayerMovement>().eggsHatched == 4)
+                    {
+                        thisplayer.GetComponent<PlayerMovement>().eggsHatched += 1;
+                    }
                 }
             }
 
@@ -128,6 +150,7 @@ public class NestsController : MonoBehaviour
     {
         if(collider.GetComponent<PhotonView>().ViewID == playerPhotonViewIdNro)
         {
+            
             //currentPlayer = collider.GetComponent<PhotonView>().ViewID;
 
             if (collider.gameObject.tag == "Player" && collider.GetComponent<PlayerMovement>().isCarryingEgg == true)
@@ -135,19 +158,22 @@ public class NestsController : MonoBehaviour
 
                 if (eggOne.activeSelf == false)
                 {
+                    collider.GetComponent<PlayerMovement>().eggOnGo.SetActive(false);
+                    collider.GetComponent<PlayerMovement>().isCarryingEgg = false;
                     eggOne.SetActive(true);
                     hatchingTimer.SetActive(true);
                     Debug.Log(collider.gameObject + "Osuma");
-                    collider.GetComponent<PlayerMovement>().eggOnGo.SetActive(false);
-                    collider.GetComponent<PlayerMovement>().isCarryingEgg = false;
+                    thisplayer = collider.GetComponent<CapsuleCollider>();
+
                 }
                 else if (eggOne.activeSelf == true && eggTwo.activeSelf == false)
                 {
+                    collider.GetComponent<PlayerMovement>().eggOnGo.SetActive(false);
+                    collider.GetComponent<PlayerMovement>().isCarryingEgg = false;
                     eggTwo.SetActive(true);
                     hatchingTimer.SetActive(true);
                     Debug.Log(collider.gameObject + "Osuma");
-                    collider.GetComponent<PlayerMovement>().eggOnGo.SetActive(false);
-                    collider.GetComponent<PlayerMovement>().isCarryingEgg = false;
+                    thisplayer = collider.GetComponent<CapsuleCollider>();
                 }
                 else if (eggOne.activeSelf == true && eggTwo.activeSelf == true && eggThree.activeSelf == false)
                 {
@@ -155,6 +181,7 @@ public class NestsController : MonoBehaviour
                     hatchingTimer.SetActive(true);
                     collider.GetComponent<PlayerMovement>().eggOnGo.SetActive(false);
                     collider.GetComponent<PlayerMovement>().isCarryingEgg = false;
+                    thisplayer = collider.GetComponent<CapsuleCollider>();
                 }
                 else if (eggOne.activeSelf == true && eggTwo.activeSelf == true && eggThree.activeSelf == true && eggFour.activeSelf == false)
                 {
@@ -162,6 +189,7 @@ public class NestsController : MonoBehaviour
                     hatchingTimer.SetActive(true);
                     collider.GetComponent<PlayerMovement>().eggOnGo.SetActive(false);
                     collider.GetComponent<PlayerMovement>().isCarryingEgg = false;
+                    thisplayer = collider.GetComponent<CapsuleCollider>();
                 }
                 else if (eggOne.activeSelf == true && eggTwo.activeSelf == true && eggThree.activeSelf == true && eggFour.activeSelf == true && eggFive.activeSelf == false)
                 {
@@ -169,6 +197,7 @@ public class NestsController : MonoBehaviour
                     hatchingTimer.SetActive(true);
                     collider.GetComponent<PlayerMovement>().eggOnGo.SetActive(false);
                     collider.GetComponent<PlayerMovement>().isCarryingEgg = false;
+                    thisplayer = collider.GetComponent<CapsuleCollider>();
                 }
 
 

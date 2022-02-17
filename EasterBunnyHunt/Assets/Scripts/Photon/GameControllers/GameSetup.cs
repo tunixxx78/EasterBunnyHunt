@@ -14,4 +14,6 @@ public class GameSetup : MonoBehaviour
             GameSetup.gS = this;
         }
     }
+
+    
 }

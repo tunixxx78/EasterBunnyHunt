@@ -27,7 +27,17 @@ public class PlayerMovement : MonoBehaviour
 
     [SerializeField] TMP_Text resultText;
 
-    [SerializeField] int eggsHatched = 0;
+    public int eggsHatched = 0;
+
+    [SerializeField] List<GameObject> nests;
+
+    private void Awake()
+    {
+        GameObject nest = GameObject.Find("Basket");
+        nests.Add(nest);
+        GameObject nest2 = GameObject.Find("Basket (1)");
+        nests.Add(nest2);
+    }
 
     private void Start()
     {
@@ -96,9 +106,20 @@ public class PlayerMovement : MonoBehaviour
                 playerAvatar.transform.localRotation = Quaternion.Euler(0, 0, 0);
             }
             
-            if(eggsHatched == 5)
+            if(eggsHatched >= 5)
             {
+                for (int i = 0; i < nests.Count; i++)
+                {
+                    nests[i].GetComponent<NestsController>().gameIsOver = true;
+                }
+                
                 resultText.text = "YOU WIN THIS ROUND!";
+                finalResultText.SetActive(true);
+            }
+
+            if(eggsHatched < 5 && FindObjectOfType<NestsController>().gameIsOver == true)
+            {
+                resultText.text = "YOU LOSE THIS ROUND!";
                 finalResultText.SetActive(true);
             }
 
