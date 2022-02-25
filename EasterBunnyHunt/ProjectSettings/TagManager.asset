@@ -7,6 +7,7 @@ TagManager:
   - Egg
   - Basket
   - HatchingEgg
+  - playerAmmo
   layers:
   - Default
   - TransparentFX

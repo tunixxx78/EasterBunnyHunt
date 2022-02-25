@@ -98,6 +98,7 @@ public class NestsController : MonoBehaviour
                     if (thisplayer.GetComponent<PlayerMovement>().eggsHatched == 4)
                     {
                         thisplayer.GetComponent<PlayerMovement>().eggsHatched += 1;
+                        WhoHasLosed.gameHasEnded = true;
                     }
                 }
             }

@@ -3,21 +3,24 @@ using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
 using TMPro;
+using System.IO;
 
 public class PlayerMovement : MonoBehaviour
 {
     private PhotonView pV;
     //Rigidbody myCC;
+
+    [SerializeField] Animator playerAnimator;
     private CharacterController myCC;
-    public float movementSpeed, jumpForce, groundDistance;
+    public float movementSpeed, jumpForce, groundDistance, ammoSpeed, coolTimerTime;
     public float rotationSpeed;
     [SerializeField] Camera myCamera;
 
     public LayerMask groundMask;
-    public Transform groundCheck;
+    public Transform groundCheck, ammoSpawnPoint;
     [SerializeField] bool isGrounded;
     Vector3 movement, velocity;
-    float gravityValue = -9.81f;
+    float gravityValue = -9.81f, originalMovementSpeed;
 
     public bool isCarryingEgg = false;
 
@@ -31,19 +34,28 @@ public class PlayerMovement : MonoBehaviour
 
     [SerializeField] List<GameObject> nests;
 
+    Vector3 dir;
+
     private void Awake()
     {
         GameObject nest = GameObject.Find("Basket");
         nests.Add(nest);
         GameObject nest2 = GameObject.Find("Basket (1)");
         nests.Add(nest2);
+        GameObject nest3 = GameObject.Find("Basket (2)");
+        nests.Add(nest3);
+        GameObject nest4 = GameObject.Find("Basket (3)");
+        nests.Add(nest4);
     }
 
     private void Start()
     {
+        StartCoroutine(GetAnimator(2));
         pV = GetComponent<PhotonView>();
         myCC = GetComponent<CharacterController>();
         myCamera = GetComponentInChildren<Camera>();
+        playerAnimator = GetComponentInChildren<Animator>();
+        originalMovementSpeed = movementSpeed;
         
         if (!pV.IsMine)
         {
@@ -61,6 +73,8 @@ public class PlayerMovement : MonoBehaviour
             
             secondCamera.SetActive(false);
             myCamera.enabled = false;
+
+            
         }
         
         if (pV.IsMine)
@@ -74,40 +88,45 @@ public class PlayerMovement : MonoBehaviour
             }
             if (Input.GetKey(KeyCode.W))
             {
-                transform.rotation = Quaternion.LookRotation(myCamera.transform.forward, myCamera.transform.up * Time.deltaTime);
+                //transform.rotation = Quaternion.LookRotation(myCamera.transform.forward, myCamera.transform.up * Time.deltaTime);
+                dir = myCamera.transform.forward;
+                dir.y = 0;
+                dir.Normalize();
+                transform.rotation = Quaternion.LookRotation(dir, transform.up * Time.deltaTime);
+                playerAnimator.SetBool("Run", true);
                 BasicMovement();
 
             }
-            if (Input.GetKey(KeyCode.A))
-            {
-                playerAvatar.transform.localRotation = Quaternion.Euler(0, -90, 0);
-                BasicMovement();
-            }
-            if (Input.GetKeyUp(KeyCode.A))
+            if (Input.GetKeyUp(KeyCode.W) || Input.GetKeyUp(KeyCode.A) || Input.GetKeyUp(KeyCode.S) || Input.GetKeyUp(KeyCode.D))
             {
                 playerAvatar.transform.localRotation = Quaternion.Euler(0, 0, 0);
+                playerAnimator.SetBool("Run", false);
             }
+                if (Input.GetKey(KeyCode.A))
+            {
+                playerAvatar.transform.localRotation = Quaternion.Euler(0, -90, 0);
+                playerAnimator.SetBool("Run", true);
+                BasicMovement();
+            }
+
             if (Input.GetKey(KeyCode.D))
             {
                 playerAvatar.transform.localRotation = Quaternion.Euler(0, 90, 0);
+                playerAnimator.SetBool("Run", true);
                 BasicMovement();
             }
-            if (Input.GetKeyUp(KeyCode.D))
-            {
-                playerAvatar.transform.localRotation = Quaternion.Euler(0, 0, 0);
-            }
+
             if (Input.GetKey(KeyCode.S))
             {
                 playerAvatar.transform.localRotation = Quaternion.Euler(0, 180, 0);
+                playerAnimator.SetBool("Run", true);
                 BasicMovement();
             }
-            if (Input.GetKeyUp(KeyCode.S))
-            {
-                playerAvatar.transform.localRotation = Quaternion.Euler(0, 0, 0);
-            }
+         
             
             if(eggsHatched >= 5)
             {
+                
                 for (int i = 0; i < nests.Count; i++)
                 {
                     nests[i].GetComponent<NestsController>().gameIsOver = true;
@@ -117,13 +136,21 @@ public class PlayerMovement : MonoBehaviour
                 finalResultText.SetActive(true);
             }
 
-            if(eggsHatched < 5 && FindObjectOfType<NestsController>().gameIsOver == true)
+            if (eggsHatched < 5 && WhoHasLosed.gameHasEnded == true/*FindObjectOfType<NestsController>().gameIsOver == true*/)
             {
                 resultText.text = "YOU LOSE THIS ROUND!";
                 finalResultText.SetActive(true);
             }
 
-            BasicRotation();
+            if (Input.GetMouseButtonDown(0))
+            {
+                BasicShoot();
+                playerAnimator.SetTrigger("Shoot");
+            }
+
+            
+
+            //BasicRotation();
         }
 
         isGrounded = Physics.CheckSphere(groundCheck.position, groundDistance, groundMask);
@@ -132,14 +159,18 @@ public class PlayerMovement : MonoBehaviour
         if(isGrounded && velocity.y < 0)
         {
             velocity.y = -2f;
+
         }
 
         float x = Input.GetAxis("Horizontal");
         float z = Input.GetAxis("Vertical");
 
-        movement = transform.right * x + transform.forward * z;
+        Vector3 z2 = z * myCamera.transform.forward;
+        Vector3 x2 = x * myCamera.transform.right;
 
-        
+        movement = (z2 + x2).normalized;
+
+        //movement = transform.right * x + transform.forward * z;
         
 
         if (Input.GetKeyDown(KeyCode.Escape))
@@ -168,9 +199,15 @@ public class PlayerMovement : MonoBehaviour
     */
     void BasicMovement()
     {
+        if (Input.GetKey(KeyCode.W) && Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.W) && Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.S) && Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.S) && Input.GetKey(KeyCode.D))
+        {
+            myCC.Move(movement * (movementSpeed / 2) * Time.deltaTime);
+        }
+        else
 
-        myCC.Move(movement * movementSpeed * Time.deltaTime);
-        
+        {
+            myCC.Move(movement * movementSpeed * Time.deltaTime);
+        }
 
     }
 
@@ -199,8 +236,34 @@ public class PlayerMovement : MonoBehaviour
             Destroy(collider.gameObject);
 
             }
+        if(collider.gameObject.tag == "playerAmmo")
+        {
+
+            movementSpeed = 1;
+            StartCoroutine(ReturnOriginalSpeed(coolTimerTime));
+            Debug.Log("OSUMAAA TULEEEEEEEEE");
+        }
 
     }
+    private void BasicShoot()
+    {
+        Vector3 bulletDir = myCamera.transform.forward;
+        
+        GameObject bullet = PhotonNetwork.Instantiate(Path.Combine("photonPrefabs", "PlayerAmmo"), ammoSpawnPoint.position, transform.rotation, 0);
 
-   
+        
+    }
+
+   IEnumerator GetAnimator(int waitTime)
+    {
+        yield return new WaitForSeconds(waitTime);
+
+        playerAnimator = GetComponentInChildren<Animator>();
+    }
+    IEnumerator ReturnOriginalSpeed(float slowMotionTime)
+    {
+        yield return new WaitForSeconds(slowMotionTime);
+
+        movementSpeed = originalMovementSpeed;
+    }
 }
